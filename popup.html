@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- MAIN -->
+  <section id="mainView" class="view">
+    <header>
+      <div class="site">
+        <div class="logo" data-icon="cookie"></div>
+        <div class="site-txt"><div class="host" id="host">Loading…</div><div class="sub" id="count"></div></div>
+      </div>
+      <div class="tools">
+        <button id="btnAdd" class="ib accent" title="Add cookie" data-icon="plus"></button>
+        <button id="btnImport" class="ib" title="Import" data-icon="import"></button>
+        <button id="btnExport" class="ib" title="Export" data-icon="export"></button>
+        <button id="btnDeleteAll" class="ib danger" title="Delete all cookies for this site" data-icon="trash"></button>
+        <button id="btnSettings" class="ib" title="Settings" data-icon="sliders"></button>
+      </div>
+    </header>
+    <div class="search"><span data-icon="search"></span><input id="search" placeholder="Search name, value or domain" autocomplete="off" spellcheck="false"></div>
+    <div class="filters" id="filters">
+      <button data-f="all" class="on">All</button><button data-f="session">Session</button><button data-f="persistent">Persistent</button><button data-f="secure">Secure</button><button data-f="httponly">HttpOnly</button>
+    </div>
+    <div id="list"></div>
+    <div id="exportMenu" class="menu hidden">
+      <div class="menu-title" id="menuTitle">Copy to clipboard as</div>
+      <button data-fmt="json"><b>JSON</b><span>Full detail, re-importable</span></button>
+      <button data-fmt="header"><b>Header String</b><span>name=value; name=value</span></button>
+      <button data-fmt="netscape"><b>Netscape</b><span>cookies.txt for curl / yt-dlp</span></button>
+    </div>
+  </section>
+
+  <!-- IMPORT -->
+  <section id="importView" class="view fixed hidden">
+    <header>
+      <div class="site">
+        <button class="ib back" title="Back" data-icon="back"></button>
+        <div class="site-txt"><div class="host">Import cookies</div><div class="sub">Into <span id="impHost"></span></div></div>
+      </div>
+    </header>
+    <div class="imp-body">
+      <div class="hint">Paste <b>JSON</b>, a <b>Header string</b> or a <b>Netscape</b> file. The format is detected automatically.</div>
+      <textarea id="importText" spellcheck="false" placeholder='[{"name":"Cookie","value":"text", ...}]
+
+Cookie=text; Editor=yes
+
+# Netscape HTTP Cookie File
+.example.com	TRUE	/	FALSE	0	Cookie	text'></textarea>
+      <button id="btnDoImport" class="btn primary wide">Import cookies</button>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="settingsView" class="view hidden">
+    <header>
+      <div class="site">
+        <button class="ib back" title="Back" data-icon="back"></button>
+        <div class="site-txt"><div class="host">Settings</div><div class="sub">Saved automatically</div></div>
+      </div>
+    </header>
+    <div class="set-body">
+      <div class="g-title">Appearance</div>
+      <div class="group">
+        <div class="srow"><div class="lbl"><b>Theme</b></div>
+          <div class="seg" data-set="theme"><button data-v="auto">Auto</button><button data-v="dark">Dark</button><button data-v="light">Light</button></div></div>
+        <div class="srow"><div class="lbl"><b>Accent color</b></div><div class="swatches" id="swatches"></div></div>
+        <div class="srow"><div class="lbl"><b>Show domain on cards</b><span>Handy when cookies come from subdomains</span></div>
+          <label class="switch"><input type="checkbox" data-set="showDomain"><i></i></label></div>
+      </div>
+      <div class="g-title">Behavior</div>
+      <div class="group">
+        <div class="srow"><div class="lbl"><b>Sort cookies by</b></div>
+          <select data-set="sort"><option value="name">Name (A–Z)</option><option value="domain">Domain</option><option value="expiry">Expiry (soonest)</option><option value="size">Size (largest)</option></select></div>
+        <div class="srow"><div class="lbl"><b>Export action</b></div>
+          <div class="seg" data-set="exportMode"><button data-v="copy">Copy</button><button data-v="file">Download</button></div></div>
+        <div class="srow"><div class="lbl"><b>Confirm "Delete all"</b><span>Click twice to confirm. Undo is always available</span></div>
+          <label class="switch"><input type="checkbox" data-set="confirmDeleteAll"><i></i></label></div>
+      </div>
+      <div class="foot"><button id="btnReset" class="btn ghost danger">Reset to defaults</button><span id="about"></span></div>
+    </div>
+  </section>
+
+  <div id="toast"></div>
+  <script src="popup.js"></script>
+</body>
+</html>
