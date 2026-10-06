@@ -6,8 +6,8 @@
 
 **A full cookie editor for Chrome & Brave — view, add, edit, delete, import & export cookies for the current site.**
 
-![Chrome / Brave MV3](https://img.shields.io/badge/Chrome%20%2F%20Brave-MV3-4f46e5?logo=googlechrome&logoColor=white)
-[![License: MIT](https://img.shields.io/badge/License-MIT-059669.svg)](LICENSE)
+![Chrome / Brave MV3](https://img.shields.io/badge/Chrome%20%2F%20Brave-MV3-c2401f?logo=googlechrome&logoColor=white)
+[![License: MIT](https://img.shields.io/badge/License-MIT-2f7d55.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/nullstacks/cookie-manager?display_name=tag&sort=semver)](https://github.com/nullstacks/cookie-manager/releases/latest)
 [![No dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](#install)
 
@@ -21,11 +21,12 @@ Editing a cookie in the browser means opening DevTools, finding the Application 
 
 ## Features
 
-- **View cookies for the current site** — live list with search (name, value or domain) and filters: All, Session, Persistent, Secure, HttpOnly
+- **View cookies for the current site** — live list with search (name, value or domain) and filters: All, Session, Persistent, Secure, HttpOnly, each with a live count
 - **Full cookie editing** — name, value, domain, path, expiry (date-time picker), SameSite (None/Lax/Strict) plus Host-only, Session, Secure and HttpOnly flags; renaming or moving a cookie replaces the old one in a single save
 - **Add & delete with undo** — one-click add pre-filled for the current site; delete one, or delete all with a two-click confirm; every delete carries an Undo in the toast
 - **Export three ways** — JSON (full detail, re-importable), header string (`name=value; …`) and Netscape `cookies.txt` for curl / wget / yt-dlp — to the clipboard or as a file
 - **Import with auto-detect** — paste JSON, a header string or a Netscape file; the format is detected automatically and invalid lines are skipped
+- **Site favicon in the header** — shows the site's own icon when available, falling back to the cookie glyph
 - **Theming & behavior** — Auto/Dark/Light theme, six accent colors, sort by name / domain / expiry / size, show-domain-on-cards, export-to-clipboard-or-file preference
 - **Zero footprint** — no background page, no network requests, MV3, zero dependencies, no build step
 
@@ -56,7 +57,7 @@ Prefer a zip? Download the `.zip` attached to the [latest release](https://githu
 
 - Everything (cookies you view, your settings) stays **local** in your browser — the extension makes **no network requests at all**
 - No analytics, no trackers, no telemetry
-- Uses only the `cookies`, `clipboardWrite` and `storage` browser APIs; `<all_urls>` host access exists only so the cookies API can read and write per-site, never to fetch anything
+- Uses only the `cookies`, `clipboardWrite` and `storage` browser APIs; `<all_urls>` host access exists only so the cookies API can read and write per-site, never to fetch anything *(site favicons shown in the header are fetched by the browser itself from the site's favicon URL — same as Chrome's own tab UI — and are never stored or sent anywhere)*
 - Nothing is stored beyond your own preferences in `chrome.storage.local`
 
 ## Contributing

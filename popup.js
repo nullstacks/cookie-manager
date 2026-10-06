@@ -14,7 +14,7 @@ const P = {
   copy: 'M10 8h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2zM4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2',
   cookie: 'M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5M8.5 8.5v.01M16 15.5v.01M12 12v.01M11 17v.01M7 14v.01'
 };
-const ic = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="${P[k]}"/></svg>`;
+const ic = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${P[k]}"/></svg>`;
 const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
 const esc = s => String(s).replace(/[&<>"]/g, m => ESC[m]);
 const pad = n => String(n).padStart(2, '0');
@@ -31,8 +31,8 @@ function expiryText(ts) {
 }
 
 /* ---------- settings ---------- */
-const DEF = { theme: 'auto', accent: '#5b6cf5', sort: 'name', showDomain: false, confirmDeleteAll: true, exportMode: 'copy' };
-const ACCENTS = ['#5b6cf5', '#8b5cf6', '#0d9488', '#e11d48', '#ea580c', '#16a34a'];
+const DEF = { theme: 'auto', accent: '#c2401f', sort: 'name', showDomain: false, confirmDeleteAll: true, exportMode: 'copy' };
+const ACCENTS = ['#c2401f', '#2f7d55', '#9a6208', '#3b5fa8', '#8a3d7a', '#1f7a7a'];
 let S = { ...DEF };
 const saveSettings = () => chrome.storage.local.set({ settings: S });
 function applyTheme() {
@@ -126,6 +126,7 @@ function sortCookies() {
 async function init() {
   const stored = await chrome.storage.local.get('settings');
   S = { ...DEF, ...(stored.settings || {}) };
+  if (!ACCENTS.includes(S.accent)) S.accent = DEF.accent; // migrate older palette
   applyTheme();
   document.querySelectorAll('[data-icon]').forEach(e => (e.innerHTML = ic(e.dataset.icon)));
   $('#swatches').innerHTML = ACCENTS.map(c => `<button style="--c:${c}" data-v="${c}" title="${c}"></button>`).join('');
@@ -146,6 +147,13 @@ async function init() {
   }
   storeId = stores.find(s => s.tabIds.includes(tab.id))?.id;
   $('#host').textContent = url.hostname;
+  if (tab.favIconUrl) { // show the site's own favicon, keep the cookie glyph if it fails to load
+    const img = new Image();
+    img.alt = '';
+    img.referrerPolicy = 'no-referrer';
+    img.onload = () => { $('#mark').replaceChildren(img); $('#mark').classList.add('fav'); };
+    img.src = tab.favIconUrl;
+  }
   $('#impHost').textContent = url.hostname;
   await load();
 }
@@ -160,10 +168,15 @@ async function load() {
 
 /* ---------- rendering (string based, single DOM write) ---------- */
 function rowHtml(c, i) {
-  const tags = (c.secure ? '<span class="tag">Secure</span>' : '') + (c.httpOnly ? '<span class="tag">HttpOnly</span>' : '');
+  const tags = (c.secure ? '<span class="tag secure">Secure</span>' : '') + (c.httpOnly ? '<span class="tag http">HttpOnly</span>' : '');
   const v = c.value.length > 90 ? c.value.slice(0, 90) + '…' : c.value;
   const info = (S.showDomain ? esc(c.domain) + ' · ' : '') + (c.session ? 'Session' : expiryText(c.expirationDate));
-  return `<div class="item" data-i="${i}"><div class="row"><div class="meta"><div class="top"><span class="nm">${esc(c.name || 'New cookie')}</span>${tags}</div><div class="val">${v ? esc(v) : '<i>empty</i>'}</div><div class="info">${info}</div></div><div class="acts"><button class="ib" data-act="copy" title="Copy value">${ic('copy')}</button><button class="ib danger" data-act="del" title="Delete">${ic('trash')}</button></div><span class="chev">${ic('chev')}</span></div></div>`;
+  return `<div class="item" data-i="${i}"><div class="row" tabindex="0" role="button" aria-expanded="false"><div class="meta"><div class="top-line"><span class="nm">${esc(c.name || 'New cookie')}</span>${tags}</div><div class="val">${v ? esc(v) : '<i>empty</i>'}</div><div class="info">${info}</div></div><div class="acts"><button class="ib" data-act="copy" title="Copy value" aria-label="Copy value">${ic('copy')}</button><button class="ib danger" data-act="del" title="Delete" aria-label="Delete cookie">${ic('trash')}</button></div><span class="chev">${ic('chev')}</span></div></div>`;
+}
+function emptyHtml() {
+  return cookies.length
+    ? '<div class="empty"><h3>Nothing matches</h3><p>Try a different search or filter.</p><button class="btn" data-empty="clear">Clear search and filters</button></div>'
+    : '<div class="empty"><h3>No cookies on this site yet</h3><p>Add one, or import a set you saved earlier.</p><button class="btn primary" data-empty="add">Add a cookie</button></div>';
 }
 function render() {
   openEl = null;
@@ -175,7 +188,10 @@ function render() {
     html += rowHtml(c, i);
     shown++;
   }
-  list.innerHTML = html || `<div class="empty">${cookies.length ? 'No matching cookies' : 'No cookies for this site'}</div>`;
+  list.innerHTML = html || emptyHtml();
+  const cnt = { all: cookies.length, session: 0, persistent: 0, secure: 0, httponly: 0 };
+  for (const c of cookies) { c.session ? cnt.session++ : cnt.persistent++; if (c.secure) cnt.secure++; if (c.httpOnly) cnt.httponly++; }
+  document.querySelectorAll('#filters button').forEach(b => (b.lastElementChild.textContent = cnt[b.dataset.f]));
   const n = cookies.length;
   $('#count').textContent = q || filter !== 'all' ? `${shown} of ${n} cookies` : `${n} cookie${n === 1 ? '' : 's'}`;
   if (draft) openForm(list.firstElementChild);
@@ -192,12 +208,13 @@ function openForm(item) {
   const c = cur(item);
   item.classList.add('open');
   item.append(buildForm(c));
+  $('.row', item).setAttribute('aria-expanded', 'true');
   openEl = item;
   if (item.dataset.i === 'new') $('.f-name', item).focus();
 }
 function closeForm(item) {
   if (item.dataset.i === 'new') { draft = null; item.remove(); }
-  else { item.classList.remove('open'); $('.form', item)?.remove(); }
+  else { item.classList.remove('open'); $('.row', item).setAttribute('aria-expanded', 'false'); $('.form', item)?.remove(); }
   if (openEl === item) openEl = null;
 }
 function buildForm(c) {
@@ -277,6 +294,11 @@ async function deleteItem(item) {
 
 /* ---------- list events (delegated) ---------- */
 list.addEventListener('click', e => {
+  const em = e.target.closest('[data-empty]');
+  if (em) {
+    if (em.dataset.empty === 'add') return addNew();
+    $('#search').value = ''; setFilter('all'); return render();
+  }
   const item = e.target.closest('.item');
   if (!item) return;
   const act = e.target.closest('[data-act]')?.dataset.act;
@@ -300,12 +322,21 @@ list.addEventListener('change', e => {
 });
 list.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target.matches('input[type=text]')) saveForm(e.target.closest('.item'));
+  else if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('row')) { e.preventDefault(); e.target.click(); }
 });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (!$('#mainView').classList.contains('hidden')) { if (openEl) { openKey = null; closeForm(openEl); } }
+  else showView('main');
+});
+function setFilter(f) {
+  filter = f;
+  document.querySelectorAll('#filters button').forEach(x => x.classList.toggle('on', x.dataset.f === f));
+}
 $('#filters').addEventListener('click', e => {
   const b = e.target.closest('button');
   if (!b) return;
-  filter = b.dataset.f;
-  document.querySelectorAll('#filters button').forEach(x => x.classList.toggle('on', x === b));
+  setFilter(b.dataset.f);
   render();
 });
 
@@ -315,8 +346,7 @@ function addNew() {
     name: '', value: '', domain: url.hostname, path: '/', hostOnly: true, session: false,
     secure: url.protocol === 'https:', httpOnly: false, sameSite: 'unspecified', expirationDate: defaultExpiry()
   };
-  $('#search').value = ''; filter = 'all';
-  document.querySelectorAll('#filters button').forEach(x => x.classList.toggle('on', x.dataset.f === 'all'));
+  $('#search').value = ''; setFilter('all');
   render();
   list.scrollTop = 0;
 }
@@ -326,7 +356,6 @@ async function deleteAll() {
   if (!cookies.length) return toast('No cookies to delete', true);
   if (S.confirmDeleteAll && !b.classList.contains('armed')) {
     b.classList.add('armed');
-    toast(`Click again to delete all ${cookies.length} cookies`);
     clearTimeout(armTimer);
     armTimer = setTimeout(() => b.classList.remove('armed'), 3000);
     return;
