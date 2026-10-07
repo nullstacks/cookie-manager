@@ -6,7 +6,7 @@
 
 **A full cookie editor for Chrome & Brave — view, add, edit, delete, import & export cookies for the current site.**
 
-![Chrome / Brave MV3](https://img.shields.io/badge/Chrome%20%2F%20Brave-MV3-c2401f?logo=googlechrome&logoColor=white)
+![Chrome / Brave MV3](https://img.shields.io/badge/Chrome%20%2F%20Brave-MV3-0071e3?logo=googlechrome&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/License-MIT-2f7d55.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/nullstacks/cookie-manager?display_name=tag&sort=semver)](https://github.com/nullstacks/cookie-manager/releases/latest)
 [![No dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](#install)
@@ -27,8 +27,12 @@ Editing a cookie in the browser means opening DevTools, finding the Application 
 - **Export three ways** — JSON (full detail, re-importable), header string (`name=value; …`) and Netscape `cookies.txt` for curl / wget / yt-dlp — to the clipboard or as a file
 - **Import with auto-detect** — paste JSON, a header string or a Netscape file; the format is detected automatically and invalid lines are skipped
 - **Site favicon in the header** — shows the site's own icon when available, falling back to the cookie glyph
-- **Theming & behavior** — Auto/Dark/Light theme, six accent colors, sort by name / domain / expiry / size, show-domain-on-cards, export-to-clipboard-or-file preference
+- **Theming & behavior** — Auto/Dark/Light theme, six system-style accent colors (blue by default), sort by name / domain / expiry / size, show-domain-on-cards, export-to-clipboard-or-file preference
 - **Zero footprint** — no background page, no network requests, MV3, zero dependencies, no build step
+
+## Design
+
+The popup follows the same clean, Apple-native system as the sibling Temp Mail extension: system type, one inset grouped list with hairline separators, tinted badges, native-feeling switches and segmented controls, and semantic system colors in light and dark. Copying a cookie's value is one always-visible click; the row expands in place to edit; the delete button appears on hover and every delete is undoable. The popup height fits its content up to the 600 px cap. There are no bundled fonts or remote assets. Icons are [Lucide](https://lucide.dev) (ISC), see `THIRD_PARTY_LICENSES.md`; product and design context lives in `PRODUCT.md`.
 
 ## Install
 

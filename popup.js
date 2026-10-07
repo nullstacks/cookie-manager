@@ -1,20 +1,23 @@
 'use strict';
 const $ = (s, r = document) => r.querySelector(s);
 
-/* ---------- icons (Lucide-style, stroke) ---------- */
-const P = {
-  plus: 'M5 12h14M12 5v14',
-  trash: 'M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6',
-  search: 'M11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM21 21l-4.3-4.3',
-  import: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3',
-  export: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12',
-  chev: 'M6 9l6 6 6-6',
-  back: 'M12 19l-7-7 7-7M19 12H5',
-  sliders: 'M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4',
-  copy: 'M10 8h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2zM4 16a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2',
-  cookie: 'M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5M8.5 8.5v.01M16 15.5v.01M12 12v.01M11 17v.01M7 14v.01'
+/* ---------- icons (Lucide, ISC license; one stroke weight) ---------- */
+const ICONS = {
+  plus: "<path d=\"M5 12h14\" /> <path d=\"M12 5v14\" />",
+  trash: "<path d=\"M10 11v6\" /> <path d=\"M14 11v6\" /> <path d=\"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6\" /> <path d=\"M3 6h18\" /> <path d=\"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2\" />",
+  search: "<path d=\"m21 21-4.34-4.34\" /> <circle cx=\"11\" cy=\"11\" r=\"8\" />",
+  import: "<path d=\"M12 15V3\" /> <path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\" /> <path d=\"m7 10 5 5 5-5\" />",
+  export: "<path d=\"M12 3v12\" /> <path d=\"m17 8-5-5-5 5\" /> <path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\" />",
+  chev: "<path d=\"m9 18 6-6-6-6\" />",
+  down: "<path d=\"m6 9 6 6 6-6\" />",
+  back: "<path d=\"m15 18-6-6 6-6\" />",
+  settings: "<path d=\"M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915\" /> <circle cx=\"12\" cy=\"12\" r=\"3\" />",
+  copy: "<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\" /> <path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\" />",
+  cookie: "<path d=\"M11 17h.01\" /> <path d=\"M11.496 2c.324-.016.558.292.529.615a4 4 0 004.235 4.368.713.713 0 01.758.757 4 4 0 004.366 4.237c.323-.03.63.204.614.527a10 10 0 01-2.915 6.566A1 1 0 114.93 4.918 10 10 0 0111.496 2\" /> <path d=\"M12 12h.01\" /> <path d=\"M16 16h.01\" /> <path d=\"M16 3h.01\" /> <path d=\"M21 4h.01\" /> <path d=\"M21 8h.01\" /> <path d=\"M7 14h.01\" /> <path d=\"M9 8h.01\" />",
+  check: "<path d=\"M20 6 9 17l-5-5\" />",
+  updown: "<path d=\"m7 15 5 5 5-5\" /> <path d=\"m7 9 5-5 5 5\" />"
 };
-const ic = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${P[k]}"/></svg>`;
+const ic = k => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>`;
 const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
 const esc = s => String(s).replace(/[&<>"]/g, m => ESC[m]);
 const pad = n => String(n).padStart(2, '0');
@@ -29,10 +32,19 @@ function expiryText(ts) {
   const t = m < 60 ? Math.max(1, Math.round(m)) + 'm' : h < 48 ? Math.round(h) + 'h' : d < 60 ? Math.round(d) + 'd' : d < 730 ? Math.round(d / 30) + 'mo' : Math.round(d / 365) + 'y';
   return 'Expires in ' + t;
 }
+// short form for the right edge of a row ("in 3d"); the full sentence goes in the tooltip
+const expShort = c => (c.session ? 'Session' : expiryText(c.expirationDate).replace('Expires ', ''));
+function flash(btn, key) { // confirm on the control itself: the icon flips to a check, then back
+  btn.setAttribute('data-done', '');
+  btn.innerHTML = ic('check');
+  clearTimeout(btn._t);
+  btn._t = setTimeout(() => { btn.removeAttribute('data-done'); btn.innerHTML = ic(key); }, 1200);
+}
 
 /* ---------- settings ---------- */
-const DEF = { theme: 'auto', accent: '#c2401f', sort: 'name', showDomain: false, confirmDeleteAll: true, exportMode: 'copy' };
-const ACCENTS = ['#c2401f', '#2f7d55', '#9a6208', '#3b5fa8', '#8a3d7a', '#1f7a7a'];
+const DEF = { theme: 'auto', accent: '#0071e3', sort: 'name', showDomain: false, confirmDeleteAll: true, exportMode: 'copy' };
+// system-style accents; every one keeps white text on the fill >= 4.5:1 and readable ink in both themes
+const ACCENTS = { '#0071e3': 'Blue', '#208037': 'Green', '#b45300': 'Orange', '#d70015': 'Red', '#8944ab': 'Purple', '#00778b': 'Teal' };
 let S = { ...DEF };
 const saveSettings = () => chrome.storage.local.set({ settings: S });
 function applyTheme() {
@@ -126,10 +138,10 @@ function sortCookies() {
 async function init() {
   const stored = await chrome.storage.local.get('settings');
   S = { ...DEF, ...(stored.settings || {}) };
-  if (!ACCENTS.includes(S.accent)) S.accent = DEF.accent; // migrate older palette
+  if (!(S.accent in ACCENTS)) S.accent = DEF.accent; // migrate older palette
   applyTheme();
   document.querySelectorAll('[data-icon]').forEach(e => (e.innerHTML = ic(e.dataset.icon)));
-  $('#swatches').innerHTML = ACCENTS.map(c => `<button style="--c:${c}" data-v="${c}" title="${c}"></button>`).join('');
+  $('#swatches').innerHTML = Object.entries(ACCENTS).map(([c, n]) => `<button style="--c:${c}" data-v="${c}" title="${n}" aria-label="${n}"></button>`).join('');
   $('#about').textContent = 'Cookie Manager v' + chrome.runtime.getManifest().version;
 
   const [[tab], stores] = await Promise.all([
@@ -141,8 +153,9 @@ async function init() {
     if (!/^https?:$/.test(url.protocol)) throw 0;
   } catch {
     $('#host').textContent = 'Unsupported page';
-    list.innerHTML = '<div class="empty">Cookies can only be managed on<br>regular http/https websites.</div>';
+    list.innerHTML = `<div class="empty">${ic('cookie')}<h3>Cookies unavailable here</h3><p>Cookies can only be managed on regular http and https websites.</p></div>`;
     document.querySelectorAll('#btnAdd,#btnImport,#btnExport,#btnDeleteAll,#search,#filters button').forEach(b => (b.disabled = true));
+    $('#count').textContent = 'Open a website to manage its cookies';
     return;
   }
   storeId = stores.find(s => s.tabIds.includes(tab.id))?.id;
@@ -170,13 +183,13 @@ async function load() {
 function rowHtml(c, i) {
   const tags = (c.secure ? '<span class="tag secure">Secure</span>' : '') + (c.httpOnly ? '<span class="tag http">HttpOnly</span>' : '');
   const v = c.value.length > 90 ? c.value.slice(0, 90) + '…' : c.value;
-  const info = (S.showDomain ? esc(c.domain) + ' · ' : '') + (c.session ? 'Session' : expiryText(c.expirationDate));
-  return `<div class="item" data-i="${i}"><div class="row" tabindex="0" role="button" aria-expanded="false"><div class="meta"><div class="top-line"><span class="nm">${esc(c.name || 'New cookie')}</span>${tags}</div><div class="val">${v ? esc(v) : '<i>empty</i>'}</div><div class="info">${info}</div></div><div class="acts"><button class="ib" data-act="copy" title="Copy value" aria-label="Copy value">${ic('copy')}</button><button class="ib danger" data-act="del" title="Delete" aria-label="Delete cookie">${ic('trash')}</button></div><span class="chev">${ic('chev')}</span></div></div>`;
+  const exp = c.session ? 'Session cookie' : expiryText(c.expirationDate);
+  return `<div class="item" data-i="${i}"><div class="row"><button class="hit" aria-expanded="false"><span class="l1"><span class="nm">${esc(c.name || 'New cookie')}</span>${tags}<span class="exp" title="${esc(exp)}">${esc(expShort(c))}</span></span><span class="val">${v ? esc(v) : '<i>empty</i>'}</span>${S.showDomain ? `<span class="dom">${esc(c.domain)}</span>` : ''}</button><div class="acts"><button class="icon-btn sm" data-act="copy" title="Copy value" aria-label="Copy value">${ic('copy')}</button><button class="icon-btn sm danger del" data-act="del" title="Delete" aria-label="Delete cookie">${ic('trash')}</button></div><span class="chev">${ic('chev')}</span></div></div>`;
 }
 function emptyHtml() {
   return cookies.length
-    ? '<div class="empty"><h3>Nothing matches</h3><p>Try a different search or filter.</p><button class="btn" data-empty="clear">Clear search and filters</button></div>'
-    : '<div class="empty"><h3>No cookies on this site yet</h3><p>Add one, or import a set you saved earlier.</p><button class="btn primary" data-empty="add">Add a cookie</button></div>';
+    ? `<div class="empty">${ic('search')}<h3>Nothing matches</h3><p>Try a different search or filter.</p><button class="btn" data-empty="clear">Clear search and filters</button></div>`
+    : `<div class="empty">${ic('cookie')}<h3>No cookies on this site yet</h3><p>Add one, or import a set you saved earlier.</p><button class="btn primary" data-empty="add">Add a cookie</button></div>`;
 }
 function render() {
   openEl = null;
@@ -208,13 +221,13 @@ function openForm(item) {
   const c = cur(item);
   item.classList.add('open');
   item.append(buildForm(c));
-  $('.row', item).setAttribute('aria-expanded', 'true');
+  $('.hit', item).setAttribute('aria-expanded', 'true');
   openEl = item;
   if (item.dataset.i === 'new') $('.f-name', item).focus();
 }
 function closeForm(item) {
   if (item.dataset.i === 'new') { draft = null; item.remove(); }
-  else { item.classList.remove('open'); $('.row', item).setAttribute('aria-expanded', 'false'); $('.form', item)?.remove(); }
+  else { item.classList.remove('open'); $('.hit', item).setAttribute('aria-expanded', 'false'); $('.form', item)?.remove(); }
   if (openEl === item) openEl = null;
 }
 function buildForm(c) {
@@ -223,7 +236,7 @@ function buildForm(c) {
   f.innerHTML = `
     <div class="fld"><label>Name</label><input type="text" class="f-name" spellcheck="false"></div>
     <div class="fld"><label>Value</label><textarea class="f-value" rows="3" spellcheck="false"></textarea></div>
-    <button class="adv-toggle" data-act="adv">Advanced ${ic('chev')}</button>
+    <button class="adv-toggle" data-act="adv">Advanced ${ic('down')}</button>
     <div class="adv hidden">
       <div class="grid2">
         <div class="fld"><label>Domain</label><input type="text" class="f-domain" spellcheck="false"></div>
@@ -231,13 +244,13 @@ function buildForm(c) {
       </div>
       <div class="grid2">
         <div class="fld"><label>Expires</label><input type="datetime-local" step="1" class="f-exp"></div>
-        <div class="fld"><label>SameSite</label><select class="f-same"><option value="unspecified">Unspecified</option><option value="no_restriction">None</option><option value="lax">Lax</option><option value="strict">Strict</option></select></div>
+        <div class="fld"><label>SameSite</label><select class="f-same plain"><option value="unspecified">Unspecified</option><option value="no_restriction">None</option><option value="lax">Lax</option><option value="strict">Strict</option></select></div>
       </div>
-      <div class="chips">
-        <label class="chip"><input type="checkbox" class="f-host"><span>Host only</span></label>
-        <label class="chip"><input type="checkbox" class="f-session"><span>Session</span></label>
-        <label class="chip"><input type="checkbox" class="f-secure"><span>Secure</span></label>
-        <label class="chip"><input type="checkbox" class="f-http"><span>HttpOnly</span></label>
+      <div class="flags">
+        <label class="frow"><span>Host only</span><input type="checkbox" class="f-host sw"></label>
+        <label class="frow"><span>Session cookie</span><input type="checkbox" class="f-session sw"></label>
+        <label class="frow"><span>Secure</span><input type="checkbox" class="f-secure sw"></label>
+        <label class="frow"><span>HttpOnly</span><input type="checkbox" class="f-http sw"></label>
       </div>
     </div>
     <div class="actions"><button class="btn ghost danger" data-act="del">Delete</button><button class="btn primary" data-act="save">Save</button></div>`;
@@ -305,7 +318,8 @@ list.addEventListener('click', e => {
   if (act === 'del') return deleteItem(item);
   if (act === 'save') return saveForm(item);
   if (act === 'copy') {
-    navigator.clipboard.writeText(cur(item).value).then(() => toast('Value copied'), () => toast('Copy failed', true));
+    const btn = e.target.closest('[data-act]');
+    navigator.clipboard.writeText(cur(item).value).then(() => flash(btn, 'copy'), () => toast('Copy failed', true));
     return;
   }
   if (act === 'adv') {
@@ -317,12 +331,12 @@ list.addEventListener('click', e => {
   if (item.classList.contains('open')) { openKey = null; closeForm(item); }
   else { openKey = item.dataset.i === 'new' ? null : keyOf(cur(item)); openForm(item); }
 });
+list.addEventListener('scroll', () => list.classList.toggle('scrolled', list.scrollTop > 2), { passive: true });
 list.addEventListener('change', e => {
   if (e.target.classList.contains('f-session')) $('.f-exp', e.target.closest('.form')).disabled = e.target.checked;
 });
 list.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target.matches('input[type=text]')) saveForm(e.target.closest('.item'));
-  else if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('row')) { e.preventDefault(); e.target.click(); }
 });
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;

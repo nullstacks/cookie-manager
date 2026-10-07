@@ -2,24 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="color-scheme" content="light dark">
   <title>Cookie Manager</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <!-- MAIN -->
   <section id="mainView" class="view">
-    <header class="top">
+    <header class="bar">
       <div class="mark" id="mark" data-icon="cookie"></div>
       <div class="ttl"><h1 id="host">Loading…</h1><p id="count"></p></div>
-      <button id="btnSettings" class="ib" title="Settings" aria-label="Settings" data-icon="sliders"></button>
+      <div class="bar-actions">
+        <button id="btnAdd" class="icon-btn accent" title="Add cookie" aria-label="Add cookie" data-icon="plus"></button>
+        <button id="btnSettings" class="icon-btn" title="Settings" aria-label="Settings" data-icon="settings"></button>
+      </div>
     </header>
 
-    <div class="bar">
+    <div class="tools">
       <label class="search"><span data-icon="search"></span><input id="search" type="search" placeholder="Search name, value or domain" autocomplete="off" spellcheck="false" aria-label="Search cookies"></label>
-      <button id="btnAdd" class="btn primary"><span data-icon="plus"></span>Add</button>
     </div>
 
-    <nav class="tabs" id="filters" aria-label="Filter cookies">
+    <nav class="chips" id="filters" aria-label="Filter cookies">
       <button data-f="all" class="on">All<i></i></button><button data-f="session">Session<i></i></button><button data-f="persistent">Persistent<i></i></button><button data-f="secure">Secure<i></i></button><button data-f="httponly">HttpOnly<i></i></button>
     </nav>
 
@@ -40,13 +43,14 @@
   </section>
 
   <!-- IMPORT -->
-  <section id="importView" class="view fixed hidden">
-    <header class="top">
-      <button class="ib back" title="Back" aria-label="Back" data-icon="back"></button>
-      <div class="ttl"><h1>Import cookies</h1><p>Into <span id="impHost"></span></p></div>
+  <section id="importView" class="view hidden">
+    <header class="bar bar-center">
+      <button class="back" aria-label="Back to cookies"><span data-icon="back"></span><span>Cookies</span></button>
+      <h1>Import</h1>
+      <span></span>
     </header>
     <div class="imp-body">
-      <p class="hint">Paste <b>JSON</b>, a <b>header string</b> or a <b>Netscape</b> cookies.txt. The format is detected for you.</p>
+      <p class="hint">Paste <b>JSON</b>, a <b>header string</b> or a <b>Netscape</b> cookies.txt for <b id="impHost"></b>. The format is detected for you.</p>
       <textarea id="importText" spellcheck="false" aria-label="Cookies to import" placeholder='[{"name":"session","value":"abc123", ...}]
 
 session=abc123; theme=dark
@@ -59,29 +63,33 @@ session=abc123; theme=dark
 
   <!-- SETTINGS -->
   <section id="settingsView" class="view hidden">
-    <header class="top">
-      <button class="ib back" title="Back" aria-label="Back" data-icon="back"></button>
-      <div class="ttl"><h1>Settings</h1><p>Saved automatically</p></div>
+    <header class="bar bar-center">
+      <button class="back" aria-label="Back to cookies"><span data-icon="back"></span><span>Back</span></button>
+      <h1>Settings</h1>
+      <span></span>
     </header>
     <div class="set-body">
-      <h2>Appearance</h2>
+      <h2 class="glabel">Appearance</h2>
       <div class="group">
-        <div class="srow"><div class="lbl"><b>Theme</b></div>
+        <div class="srow"><span class="grow">Theme</span>
           <div class="seg" data-set="theme"><button data-v="auto">Auto</button><button data-v="dark">Dark</button><button data-v="light">Light</button></div></div>
-        <div class="srow"><div class="lbl"><b>Accent</b></div><div class="swatches" id="swatches"></div></div>
-        <div class="srow"><div class="lbl"><b>Show domain on each cookie</b><span>Helpful when a site sets cookies on subdomains</span></div>
-          <label class="switch"><input type="checkbox" data-set="showDomain"><i></i></label></div>
+        <div class="srow"><span class="grow">Accent</span><div class="swatches" id="swatches"></div></div>
+        <label class="srow"><span class="grow">Show domain on each cookie<small>Helpful when a site sets cookies on subdomains</small></span>
+          <input type="checkbox" class="sw" data-set="showDomain"></label>
       </div>
-      <h2>Behavior</h2>
+
+      <h2 class="glabel">Behavior</h2>
       <div class="group">
-        <div class="srow"><div class="lbl"><b>Sort cookies by</b></div>
-          <select data-set="sort" aria-label="Sort cookies by"><option value="name">Name (A–Z)</option><option value="domain">Domain</option><option value="expiry">Expiry (soonest)</option><option value="size">Size (largest)</option></select></div>
-        <div class="srow"><div class="lbl"><b>Export</b></div>
+        <label class="srow"><span class="grow">Sort cookies by</span>
+          <span class="selwrap"><select data-set="sort" aria-label="Sort cookies by"><option value="name">Name (A–Z)</option><option value="domain">Domain</option><option value="expiry">Expiry (soonest)</option><option value="size">Size (largest)</option></select><span data-icon="updown"></span></span></label>
+        <div class="srow"><span class="grow">Export</span>
           <div class="seg" data-set="exportMode"><button data-v="copy">Copy</button><button data-v="file">Download</button></div></div>
-        <div class="srow"><div class="lbl"><b>Confirm "Delete all"</b><span>Click twice to confirm. Undo always works</span></div>
-          <label class="switch"><input type="checkbox" data-set="confirmDeleteAll"><i></i></label></div>
+        <label class="srow"><span class="grow">Confirm “Delete all”<small>Click twice to confirm. Undo always works</small></span>
+          <input type="checkbox" class="sw" data-set="confirmDeleteAll"></label>
       </div>
-      <div class="foot"><button id="btnReset" class="btn ghost danger">Reset to defaults</button><span id="about"></span></div>
+
+      <div class="group gap"><button id="btnReset" class="srow action danger">Reset to defaults</button></div>
+      <p class="footer">Saved automatically · <span id="about"></span></p>
     </div>
   </section>
 
